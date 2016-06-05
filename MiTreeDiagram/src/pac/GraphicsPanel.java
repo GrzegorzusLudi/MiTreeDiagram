@@ -37,7 +37,9 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 	List<gPage> pageList;
 	List<gPage> clearLayoutPageList;
 	JFrame frame;
-
+	
+	int leftColumnWidth = 50;
+	
 	//painting
     public void paint(Graphics g) {   
 
@@ -49,7 +51,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
     	Graphics2D g2d = (Graphics2D) g;
     	g2d.setColor(new Color(245,245,245));
 		g2d.fillRect(0, 0, getWidth(), getHeight());
-    	g2d.translate(30,0);
+    	g2d.translate(leftColumnWidth,0);
     	int a = 0;
     	while((a<pageCount && !clearLayout) || (clearLayout && a<clearLayoutPageList.size())){
     		gPage uPage;
@@ -65,23 +67,23 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
     		g2d.drawRect(0, 30*a, getWidth(), 30);
     		
         	g2d.setColor(new Color(255,255,255));
-    		g2d.fillRect(-30, 30*a, 30, 30);
+    		g2d.fillRect(-leftColumnWidth, 30*a, leftColumnWidth, 30);
         	g2d.setColor(new Color(0,0,0));
-    		g2d.drawRect(-30, 30*a, 30, 30);
+    		g2d.drawRect(-leftColumnWidth, 30*a, leftColumnWidth, 30);
 
         	g2d.setStroke(new BasicStroke(1));
 
     		if(!clearLayout){
-    			g2d.drawString(Integer.toString(a), 3-30, 30*(a+1));
+    			g2d.drawString(Integer.toString(a), 3-leftColumnWidth, 30*(a+1));
     		} else {
-    			g2d.drawString(Integer.toString(uPage.number), 3-30, 30*(a+1));
+    			g2d.drawString(Integer.toString(uPage.number), 3-leftColumnWidth, 30*(a+1));
     		}
 			int validNodeCount = 0;
     		int b = 0;
     		while(b<height){
     			if(uPage.node[b]!=null){
     				validNodeCount++;
-    	        	int blockWidth = getWidth()-30;
+    	        	int blockWidth = getWidth()-leftColumnWidth;
     	        	int leftPos = blockWidth-blockWidth/powerOf2(b);
     	        	int rightPos;
     	        	if(b == height-1)
