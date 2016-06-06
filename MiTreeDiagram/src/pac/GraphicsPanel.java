@@ -5,6 +5,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.GeneralPath;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.File;
@@ -39,7 +43,8 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 	JFrame frame;
 	
 	int leftColumnWidth = 50;
-	
+	int xx = 0;
+	int yy = -10;
 	//painting
     public void paint(Graphics g) {   
 
@@ -73,11 +78,6 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 
         	g2d.setStroke(new BasicStroke(1));
 
-    		if(!clearLayout){
-    			g2d.drawString(Integer.toString(a), 3-leftColumnWidth, 30*(a+1));
-    		} else {
-    			g2d.drawString(Integer.toString(uPage.number), 3-leftColumnWidth, 30*(a+1));
-    		}
 			int validNodeCount = 0;
     		int b = 0;
     		while(b<height){
@@ -95,15 +95,15 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
     	        	g2d.setColor(new Color(0,0,0));
     	    		gNode uNode = uPage.node[b];
     	    		int elementWidth = (rightPos-leftPos)/(uNode.maxKeyNumber*2+1);
+    	    		uNode.pointerWidth = elementWidth;
     	    		int c = 0;
     	    		while(c<uNode.maxKeyNumber+1){
-    	    			if(uNode.pointer[c]>0){
+    	    			if(uNode.pointer[c]>-1){
+    	    				uNode.pointerPos[c] = leftPos+elementWidth*c*2;
     	    				g2d.setColor(new Color(120,240,120));
     	    				g2d.fillRect(leftPos+elementWidth*c*2, 30*a, elementWidth, 30);
     	    				g2d.setColor(new Color(0,0,0));
     	    				g2d.drawRect(leftPos+elementWidth*c*2, 30*a, elementWidth, 30);
-    	    				if(uNode.level>1)
-    	    				g2d.drawString(Integer.toString(getPageNumberFromAddres(uNode.pointer[c])), leftPos+elementWidth*(c*2)+3, 30*a+25);
     	    			}
     	    			if(c<uNode.maxKeyNumber && uNode.key[c]!=null){
     	    				g2d.setColor(new Color(240,240,120));
@@ -111,11 +111,46 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
     	    				g2d.setColor(new Color(0,0,0));
     	    				g2d.drawRect(leftPos+elementWidth*(c*2+1), 30*a, elementWidth, 30);
     	    				
-    	    				g2d.drawString(uNode.key[c].toString(), leftPos+elementWidth*(c*2+1)+3, 30*a+20);
     	    			}
     	    			
     	    			c++;
     	    		}
+    	    		c = 0;
+    	    		while(c<uNode.maxKeyNumber+1){
+    	    			if(uNode.pointer[c]>0){
+    	    				if(uNode.level>1)
+    	    				g2d.drawString(Integer.toString(getPageNumberFromAddres(uNode.pointer[c])), leftPos+elementWidth*(c*2)+3, 30*a+25);
+    	    			}
+    	    			if(c<uNode.maxKeyNumber && uNode.key[c]!=null){
+    	    				g2d.drawString(uNode.key[c].toString(), leftPos+elementWidth*(c*2+1)+3, 30*a+12);
+    	    			}
+    	    			
+    	    			c++;
+    	    		}/*
+    	    		c = 0;
+    	    		while(c<uNode.maxKeyNumber+1){
+    	    			if(uNode.pointerPos[c]>=0 && yy>a*30 && yy<=(a+1)*30 && xx>uNode.pointerPos[c] && xx<=uNode.pointerPos[c]+uNode.pointerWidth){
+    	    				
+    	    				int pageInd = getPageNumberFromAddres(uNode.pointer[c]);
+    	    				gPage zPage = null;
+    	    				int l = 0;
+    			    		if(!clearLayout){
+    			    			zPage = pageList.get(pageInd);
+    			    		} else {
+    			    			if(pageInd<clearLayoutPageList.size() && clearLayoutPageList.contains(pageList.get(pageInd))){
+    			    				zPage = clearLayoutPageList.get(pageInd);
+    			    			}
+    			    		}
+    			    		if(zPage!=null){
+    			    			GeneralPath line = new GeneralPath();
+	    	    				line.moveTo((float)uNode.pointerPos[c], (float)a*30);
+    			    			line.lineTo((float)(blockWidth-blockWidth/powerOf2(uNode.level-1)), (float)(zPage.number)*30);
+    			    			line.closePath();
+    			    			g2d.draw(line);
+    			    		}
+    	    			}
+    	    			c++;
+    	    		}*/
     	        	g2d.setStroke(new BasicStroke(2));
     	    		g2d.drawRect(leftPos, 30*a, rightPos-leftPos, 30);
     	        	g2d.setStroke(new BasicStroke(1));
@@ -125,6 +160,11 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
     			}
     			b++;
     		}
+    		if(!clearLayout){
+    			g2d.drawString(Integer.toString(a), 3-leftColumnWidth, 30*(a+1));
+    		} else {
+    			g2d.drawString(Integer.toString(uPage.number), 3-leftColumnWidth, 30*(a+1));
+    		}
     		a++;
     	}
     }
@@ -132,6 +172,24 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 	GraphicsPanel(String name,JFrame jf){
 		frame = jf;
 		init(name);
+		addMouseMotionListener(new MouseMotionListener(){
+
+			@Override
+			public void mouseDragged(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseMoved(MouseEvent e) {
+
+	    		xx=e.getX();
+	    		yy=e.getY()+leftColumnWidth;
+	    		revalidate();
+	    		repaint();
+			}
+			
+		});
 	}
 	public void init(String name){
 		
@@ -308,13 +366,18 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
     	long pageAddr;
     	int level;
     	int maxKeyNumber;
+    	int pointerWidth;
+    	int[] pointerPos;
     	gNode(long pAddr,int lvl,int mKNumber){
     		pageAddr = pAddr;
     		level = lvl;
     		maxKeyNumber = mKNumber;
     		pointer = new long[mKNumber+1];
+    		pointerPos = new int[mKNumber+1];
+    		pointerWidth = 0;
     		for(int i = 0;i<=mKNumber;i++){
     			pointer[i] = -1;
+    			pointerPos[i] = -100;
     		}
     		key = new Object[mKNumber];
     	}
