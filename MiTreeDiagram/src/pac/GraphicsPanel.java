@@ -22,21 +22,36 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-
+/**
+ * Drawing in a graphical component
+ * @author KaczorDonald
+ *
+ * @param <TKey>
+ * @param <TValue>
+ */
 public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue extends Serializable> extends JPanel {
 
 	File file;
+	/**
+	 * Object which operates on the file
+	 */
 	public RandomAccessFile raFile;
 	int pointerSize = Long.BYTES;
 	
 	long rootPage;
 	int pageSize;
+	/**
+	 * maximal size of key in tree
+	 */
 	public int keySize;
 	int height;
 	
 	long headerSize;      //size of header of the file
 	int keyPointerCount;
 	int pageCount = 0;
+	/**
+	 * Variable stating if the pages are shown in more clear way
+	 */
 	public boolean clearLayout = false;
 	List<gPage> pageList;
 	List<gPage> clearLayoutPageList;
@@ -45,7 +60,9 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 	int leftColumnWidth = 50;
 	int xx = 0;
 	int yy = -10;
-	//painting
+	/** Painting
+	 * 
+	 */
     public void paint(Graphics g) {   
 
 		if(!clearLayout){
@@ -98,7 +115,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
     	    		uNode.pointerWidth = elementWidth;
     	    		int c = 0;
     	    		while(c<uNode.maxKeyNumber+1){
-    	    			if(uNode.pointer[c]>-1){
+    	    			if(uNode.pointer[c]>0){
     	    				uNode.pointerPos[c] = leftPos+elementWidth*c*2;
     	    				g2d.setColor(new Color(120,240,120));
     	    				g2d.fillRect(leftPos+elementWidth*c*2, 30*a, elementWidth, 30);
@@ -126,31 +143,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
     	    			}
     	    			
     	    			c++;
-    	    		}/*
-    	    		c = 0;
-    	    		while(c<uNode.maxKeyNumber+1){
-    	    			if(uNode.pointerPos[c]>=0 && yy>a*30 && yy<=(a+1)*30 && xx>uNode.pointerPos[c] && xx<=uNode.pointerPos[c]+uNode.pointerWidth){
-    	    				
-    	    				int pageInd = getPageNumberFromAddres(uNode.pointer[c]);
-    	    				gPage zPage = null;
-    	    				int l = 0;
-    			    		if(!clearLayout){
-    			    			zPage = pageList.get(pageInd);
-    			    		} else {
-    			    			if(pageInd<clearLayoutPageList.size() && clearLayoutPageList.contains(pageList.get(pageInd))){
-    			    				zPage = clearLayoutPageList.get(pageInd);
-    			    			}
-    			    		}
-    			    		if(zPage!=null){
-    			    			GeneralPath line = new GeneralPath();
-	    	    				line.moveTo((float)uNode.pointerPos[c], (float)a*30);
-    			    			line.lineTo((float)(blockWidth-blockWidth/powerOf2(uNode.level-1)), (float)(zPage.number)*30);
-    			    			line.closePath();
-    			    			g2d.draw(line);
-    			    		}
-    	    			}
-    	    			c++;
-    	    		}*/
+    	    		}
     	        	g2d.setStroke(new BasicStroke(2));
     	    		g2d.drawRect(leftPos, 30*a, rightPos-leftPos, 30);
     	        	g2d.setStroke(new BasicStroke(1));
@@ -176,7 +169,6 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 
 			@Override
 			public void mouseDragged(MouseEvent arg0) {
-				// TODO Auto-generated method stub
 				
 			}
 
@@ -191,6 +183,10 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 			
 		});
 	}
+	/**
+	 * Do 
+	 * @param Name of default path.
+	 */
 	public void init(String name){
 		
 		try {
@@ -240,6 +236,13 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 	/*Code below is copied from TreeFile from the mu-Tree project*/
 	
     //Starts from root node, then searches all valid nodes recursively
+	/**
+	 * Method copied from TreeFile from the mu-Tree project
+	 * gets node from page
+	 * @param pAddr
+	 * @param level
+	 * @throws IOException
+	 */
 	public void getNodeFromPage(long pAddr,int level) throws IOException
 	{
 		gNode<TKey,TValue> node;
@@ -296,6 +299,13 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 		}
 		
 	}
+	/**
+	 * Method copied from TreeFile from the mu-Tree project
+	 * Number of keys able to write to a node of certain level
+	 * 
+	 * @param level Level of the node
+	 * @return
+	 */
 	public int maxKeyNumber(int level){ 
 		int n = 0;
 		int size = nodeSize(level);
@@ -305,6 +315,11 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 		return n-1;
 	}
 
+	/**
+	 * Size of node of a certain level in memory
+	 * @param level Level of the node
+	 * @return
+	 */
 	public int nodeSize(int level){ 
 		if(level == height)
 			level--;

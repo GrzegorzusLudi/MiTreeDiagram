@@ -1,10 +1,15 @@
 package pac;
 import java.io.File;
 import javax.swing.JFileChooser;
-
 import javax.swing.JFrame;
+
+/**
+ * Main class of the application
+ * @author Grzegorz Stasiak
+ *
+ */
 public class MiTreeDiagram {
-	static String path = "C:\\Users\\KaczorDonald\\BTreeTest";
+	static String path = "C:\\Users\\KaczorDonald";
 	public static void main(String [] args){
 		//source of data fileJFileChooser jFileChooser = new JFileChooser();
 		
@@ -17,6 +22,6 @@ public class MiTreeDiagram {
 		if (result == JFileChooser.APPROVE_OPTION) {
 		    selectedFile = jFileChooser.getSelectedFile();
 		}
-		MemoryCheck<Integer, Integer> window = new MemoryCheck<Integer,Integer>(selectedFile.getAbsolutePath());
+		MainFrame<Integer, Integer> window = new MainFrame<Integer,Integer>(selectedFile.getAbsolutePath());
 	}
 }
