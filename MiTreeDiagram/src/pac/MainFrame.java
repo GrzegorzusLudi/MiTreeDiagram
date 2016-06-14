@@ -18,21 +18,26 @@ import javax.swing.JScrollPane;
  * GUI window
  * @author Grzegorz Stasiak
  *
- * @param <TKey>
- * @param <TValue>
+ * @param <TKey> key type
  */
-public class MainFrame<TKey extends Comparable<TKey> & Serializable, TValue extends Serializable> extends JFrame 
+public class MainFrame<TKey extends Comparable<TKey> & Serializable> extends JFrame 
 {
-	
+	//String file - path to loaded file
 	MainFrame(String file){
 		super("Tree file reader");
 		setBounds(100,100,500,500);
 		
-		GraphicsPanel p = new GraphicsPanel<TKey, TValue>(file,this);
+		//drawing panel
+		GraphicsPanel p = new GraphicsPanel<TKey>(file,this);
+		
 		JScrollPane scrollPane = new JScrollPane(p);
 		setLayout(new BorderLayout());
+		
+		//bottom panel
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
+		
+		//reload button
 		JButton button = new JButton("Reload");
 		button.addActionListener(new ActionListener(){
 
@@ -44,6 +49,8 @@ public class MainFrame<TKey extends Comparable<TKey> & Serializable, TValue exte
 			}
 			
 		});
+		
+		//clear layout checkbox
 		JCheckBox cb = new JCheckBox("Clear layout");
 		cb.addItemListener(new ItemListener(){
 
