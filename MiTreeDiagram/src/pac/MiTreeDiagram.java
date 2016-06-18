@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+//<<<<<<< HEAD
 package pac;
 import java.io.File;
 import javax.swing.JFileChooser;
@@ -31,7 +31,7 @@ public class MiTreeDiagram {
 			System.exit(0);
 		}
 	}
-}
+}/*
 =======
 package pac;
 import java.io.File;
@@ -42,7 +42,7 @@ import javax.swing.JFrame;
  * Main class of the application
  * @author Grzegorz Stasiak
  *
- */
+ 
 public class MiTreeDiagram {
 	static String path = "C:\\Users\\KaczorDonald";
 	public static void main(String [] args){
@@ -60,4 +60,4 @@ public class MiTreeDiagram {
 		MainFrame<Integer, Integer> window = new MainFrame<Integer,Integer>(selectedFile.getAbsolutePath());
 	}
 }
->>>>>>> 480e63b875a3a2d7a16e2c35a6bb584cf9793a04
+>>>>>>> 480e63b875a3a2d7a16e2c35a6bb584cf9793a04*/

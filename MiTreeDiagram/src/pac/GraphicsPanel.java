@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+//<<<<<<< HEAD
 package pac;
 
 import java.awt.BasicStroke;
@@ -46,7 +46,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
 	 */
 	public int keySize;
 	int height;
-	
+	int innerValueSize = Integer.BYTES;
 	long headerSize;      //size of header of the file
 	int keyPointerCount;
 	int pageCount = 0;
@@ -57,7 +57,8 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
 	List<gPage> pageList;
 	List<gPage> clearLayoutPageList;
 	JFrame frame;
-	
+
+	int pageHeight = 40;
 	int leftColumnWidth = 50;
 	int xx = 0;
 	int yy = -10;
@@ -67,9 +68,9 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
     public void paint(Graphics g) {   
 
 		if(!clearLayout){
-			setPreferredSize(new Dimension(frame.getWidth(),pageCount*30));
+			setPreferredSize(new Dimension(frame.getWidth(),pageCount*pageHeight));
 		} else {
-			setPreferredSize(new Dimension(frame.getWidth(),clearLayoutPageList.size()*30));
+			setPreferredSize(new Dimension(frame.getWidth(),clearLayoutPageList.size()*pageHeight));
 		}
     	Graphics2D g2d = (Graphics2D) g;
     	g2d.setColor(new Color(245,245,245));
@@ -86,14 +87,14 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
     		}
         	g2d.setStroke(new BasicStroke(2));
         	g2d.setColor(new Color(200,200,200));
-    		g2d.fillRect(0, 30*a, getWidth(), 30);
+    		g2d.fillRect(0, pageHeight*a, getWidth(), pageHeight);
         	g2d.setColor(new Color(0,0,0));
-    		g2d.drawRect(0, 30*a, getWidth(), 30);
+    		g2d.drawRect(0, pageHeight*a, getWidth(), pageHeight);
     		
         	g2d.setColor(new Color(255,255,255));
-    		g2d.fillRect(-leftColumnWidth, 30*a, leftColumnWidth, 30);
+    		g2d.fillRect(-leftColumnWidth, pageHeight*a, leftColumnWidth, pageHeight);
         	g2d.setColor(new Color(0,0,0));
-    		g2d.drawRect(-leftColumnWidth, 30*a, leftColumnWidth, 30);
+    		g2d.drawRect(-leftColumnWidth, pageHeight*a, leftColumnWidth, pageHeight);
 
         	g2d.setStroke(new BasicStroke(1));
 
@@ -111,7 +112,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
     	        	else
     	        		rightPos = blockWidth-blockWidth/powerOf2(b+1);
     	        	g2d.setColor(new Color(240,240,240));
-    	    		g2d.fillRect(leftPos, 30*a, rightPos-leftPos, 30);
+    	    		g2d.fillRect(leftPos, pageHeight*a, rightPos-leftPos, pageHeight);
     	        	g2d.setColor(new Color(0,0,0));
     	    		gNode uNode = uPage.node[b];
     	    		int elementWidth = (rightPos-leftPos)/(uNode.maxKeyNumber*2+1);
@@ -122,17 +123,24 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
     	    			if(uNode.pointer[c]>0){
     	    				uNode.pointerPos[c] = leftPos+elementWidth*c*2;
     	    				g2d.setColor(new Color(120,240,120));
-    	    				g2d.fillRect(leftPos+elementWidth*c*2, 30*a, elementWidth, 30);
+    	    				g2d.fillRect(leftPos+elementWidth*c*2, pageHeight*a, elementWidth, pageHeight);
     	    				g2d.setColor(new Color(0,0,0));
-    	    				g2d.drawRect(leftPos+elementWidth*c*2, 30*a, elementWidth, 30);
+    	    				g2d.drawRect(leftPos+elementWidth*c*2, pageHeight*a, elementWidth, pageHeight);
     	    			}
     	    			//keys (yellow rectangles)
     	    			if(c<uNode.maxKeyNumber && uNode.key[c]!=null){
     	    				g2d.setColor(new Color(240,240,120));
-    	    				g2d.fillRect(leftPos+elementWidth*(c*2+1), 30*a, elementWidth, 30);
+    	    				g2d.fillRect(leftPos+elementWidth*(c*2+1), pageHeight*a, elementWidth, pageHeight);
     	    				g2d.setColor(new Color(0,0,0));
-    	    				g2d.drawRect(leftPos+elementWidth*(c*2+1), 30*a, elementWidth, 30);
+    	    				g2d.drawRect(leftPos+elementWidth*(c*2+1), pageHeight*a, elementWidth, pageHeight);
     	    				
+    	    			}
+    	    			//inner node value
+    	    			if(c<uNode.maxKeyNumber && uNode.level>1){
+    	    				g2d.setColor(new Color(200,200,240));
+    	    				g2d.fillRect(leftPos+elementWidth*c*2, pageHeight*a, elementWidth*2, 10);
+    	    				g2d.setColor(new Color(0,0,0));
+    	    				g2d.drawRect(leftPos+elementWidth*c*2, pageHeight*a, elementWidth*2, 10);
     	    			}
     	    			
     	    			c++;
@@ -142,29 +150,33 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
     	    			//number of a page where the pointer points
     	    			if(uNode.pointer[c]>0){
     	    				if(uNode.level>1)
-    	    				g2d.drawString(Integer.toString(getPageNumberFromAddres(uNode.pointer[c])), leftPos+elementWidth*(c*2)+3, 30*a+25);
+    	    				g2d.drawString(Integer.toString(getPageNumberFromAddres(uNode.pointer[c])), leftPos+elementWidth*(c*2)+3, pageHeight*a+(pageHeight-5));
     	    			}
     	    			//key value
     	    			if(c<uNode.maxKeyNumber && uNode.key[c]!=null){
-    	    				g2d.drawString(uNode.key[c].toString(), leftPos+elementWidth*(c*2+1)+3, 30*a+12);
+    	    				g2d.drawString(uNode.key[c].toString(), leftPos+elementWidth*(c*2+1)+3, pageHeight*a+(pageHeight-18));
+    	    			}
+    	    			//inner node value
+    	    			if(c<uNode.maxKeyNumber && uNode.level>1){
+    	    				g2d.drawString(Integer.toString(uNode.values[c]), leftPos+elementWidth*(c*2)+3, pageHeight*a+10);
     	    			}
     	    			
     	    			c++;
     	    		}
     	        	g2d.setStroke(new BasicStroke(2));
-    	    		g2d.drawRect(leftPos, 30*a, rightPos-leftPos, 30);
+    	    		g2d.drawRect(leftPos, pageHeight*a, rightPos-leftPos, pageHeight);
     	        	g2d.setStroke(new BasicStroke(1));
     			}
     			b++;
     		}
     		if(validNodeCount==0){
-    			g2d.drawString("Unused page", 3, 30*a+20);
+    			g2d.drawString("Unused page", 3, pageHeight*a+(pageHeight-5));
     		}
     		//index number of page
     		if(!clearLayout){
-    			g2d.drawString(Integer.toString(a), 3-leftColumnWidth, 30*(a+1));
+    			g2d.drawString(Integer.toString(a), 3-leftColumnWidth, pageHeight*(a+1));
     		} else {
-    			g2d.drawString(Integer.toString(uPage.number), 3-leftColumnWidth, 30*(a+1));
+    			g2d.drawString(Integer.toString(uPage.number), 3-leftColumnWidth, pageHeight*(a+1));
     		}
     		a++;
     	}
@@ -259,7 +271,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
 		long readPlace;
 		int elementCount = 0; //checks if node isn't empty
 		
-		int maxKeyNumber = maxKeyNumber(level);
+		int maxKeyNumber = maxKeyCount(level);
 		if(level==this.height){
 			readPlace = pAddr;
 		} else {
@@ -298,6 +310,14 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
 			}
 			a++;
 		}
+
+		if(level > 1)
+			for(a=0; a < maxKeyNumber; a++)
+			{
+				node.values[a] = raFile.readInt();
+				System.out.println("Wczytano "+node.values[a]);
+			}
+		
 		//puts node into one of pages
 		int pagePlace = getPageNumberFromAddres(pAddr);
 		if(elementCount>0 && pagePlace>-1 && pagePlace<pageCount){
@@ -319,15 +339,26 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
 	 * 
 	 * @param level Level of the node
 	 * @return
-	 */
-	public int maxKeyNumber(int level){ 
-		int n = 0;
-		int size = nodeSize(level);
-		while(pointerSize*(n+1)+keySize*n<=size){
-			n++;
+	 */public int maxKeyCount(int level)
+		{ // level decreased by 1 for root
+			int n = 0;
+			int size = nodeSize(level);
+			
+			// For n keys leaf node has n values
+			if(level == 1)
+				while ( (pointerSize + keySize) * n<= size)
+				{
+					n++;
+				}
+			// For n keys inner node has n+1 children and n values
+			else
+				while (pointerSize * (n + 1) + (keySize + innerValueSize) * n<= size)
+				{
+					n++;
+				}
+			
+			return n - 1;
 		}
-		return n-1;
-	}
 
 	/**
 	 * Size of node of a certain level in memory
@@ -398,6 +429,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
     	int maxKeyNumber;
     	int pointerWidth;
     	int[] pointerPos;
+    	int[] values;
     	gNode(long pAddr,int lvl,int mKNumber){
     		pageAddr = pAddr;
     		level = lvl;
@@ -405,6 +437,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
     		pointer = new long[mKNumber+1];
     		pointerPos = new int[mKNumber+1];
     		pointerWidth = 0;
+        	values = new int[mKNumber];
     		for(int i = 0;i<=mKNumber;i++){
     			pointer[i] = -1;
     			pointerPos[i] = -100;
@@ -422,7 +455,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
     		key[pos] = obj;
     	}
     }
-}
+}/**
 =======
 package pac;
 
@@ -454,13 +487,13 @@ import javax.swing.JPanel;
  *
  * @param <TKey>
  * @param <TValue>
- */
+ 
 public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue extends Serializable> extends JPanel {
 
 	File file;
 	/**
 	 * Object which operates on the file
-	 */
+	 
 	public RandomAccessFile raFile;
 	int pointerSize = Long.BYTES;
 	
@@ -468,7 +501,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 	int pageSize;
 	/**
 	 * maximal size of key in tree
-	 */
+	 
 	public int keySize;
 	int height;
 	
@@ -477,7 +510,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 	int pageCount = 0;
 	/**
 	 * Variable stating if the pages are shown in more clear way
-	 */
+	 
 	public boolean clearLayout = false;
 	List<gPage> pageList;
 	List<gPage> clearLayoutPageList;
@@ -488,7 +521,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 	int yy = -10;
 	/** Painting
 	 * 
-	 */
+	 
     public void paint(Graphics g) {   
 
 		if(!clearLayout){
@@ -612,7 +645,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 	/**
 	 * Do 
 	 * @param Name of default path.
-	 */
+	 
 	public void init(String name){
 		
 		try {
@@ -668,7 +701,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 	 * @param pAddr
 	 * @param level
 	 * @throws IOException
-	 */
+	 
 	public void getNodeFromPage(long pAddr,int level) throws IOException
 	{
 		gNode<TKey,TValue> node;
@@ -731,7 +764,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 	 * 
 	 * @param level Level of the node
 	 * @return
-	 */
+	 
 	public int maxKeyNumber(int level){ 
 		int n = 0;
 		int size = nodeSize(level);
@@ -745,7 +778,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
 	 * Size of node of a certain level in memory
 	 * @param level Level of the node
 	 * @return
-	 */
+	 
 	public int nodeSize(int level){ 
 		if(level == height)
 			level--;
@@ -834,4 +867,4 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable, TValue 
     	}
     }
 }
->>>>>>> 480e63b875a3a2d7a16e2c35a6bb584cf9793a04
+>>>>>>> 480e63b875a3a2d7a16e2c35a6bb584cf9793a04*/
