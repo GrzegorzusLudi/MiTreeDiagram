@@ -158,6 +158,7 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
     	    			}
     	    			//inner node value
     	    			if(c<uNode.maxKeyNumber && uNode.level>1){
+    	    				System.out.println("Numer: "+uNode.values[c]);
     	    				g2d.drawString(Integer.toString(uNode.values[c]), leftPos+elementWidth*(c*2)+3, pageHeight*a+10);
     	    			}
     	    			
@@ -311,13 +312,17 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
 			a++;
 		}
 
-		if(level > 1)
+		if(level > 1){
+
+			raFile.seek(readPlace + Long.BYTES * (maxKeyNumber + 1) + maxKeyNumber * keySize);
 			for(a=0; a < maxKeyNumber; a++)
 			{
-				node.values[a] = raFile.readInt();
-				System.out.println("Wczytano "+node.values[a]);
+				int b = raFile.readInt();
+				node.setValue(a,b);
+				if(b>0)
+				System.out.println(b);
 			}
-		
+		}
 		//puts node into one of pages
 		int pagePlace = getPageNumberFromAddres(pAddr);
 		if(elementCount>0 && pagePlace>-1 && pagePlace<pageCount){
@@ -383,17 +388,12 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
 	}
 	@SuppressWarnings("unchecked")
 	private TKey readObj(long pos) throws IOException, ClassNotFoundException, EOFException{
-		TKey readObject;
-		try {
-	    byte[] buf = new byte[keySize];
-	    raFile.seek(pos);
-	    raFile.readFully(buf, 0, keySize);
+		byte[] buf = new byte[keySize];
+		raFile.seek(pos);
+		raFile.readFully(buf, 0, keySize);
 		ObjectInputStream is = new ObjectInputStream(new ByteArrayInputStream(buf));
-		
-		readObject = (TKey)is.readObject();
-		} catch(EOFException e){
-			readObject = null;
-		}
+
+		TKey readObject = (TKey) is.readObject();
 		return readObject;
 	}
     /*Two not so important methods*/
@@ -450,6 +450,9 @@ public class GraphicsPanel<TKey extends Comparable<TKey> & Serializable> extends
     			getNodeFromPage(addr,level-1);
     		}
     		
+    	}
+    	public void setValue(int pos,int val) throws IOException{
+    		values[pos] = val;
     	}
     	public void setKey(int pos,Object obj){
     		key[pos] = obj;
