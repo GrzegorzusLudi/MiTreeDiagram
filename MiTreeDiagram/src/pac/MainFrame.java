@@ -1,7 +1,6 @@
 package pac;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -16,6 +15,7 @@ import javax.swing.JScrollPane;
 
 /**
  * GUI window
+ * @see MiTreeDiagram
  * @author Grzegorz Stasiak
  *
  * @param <TKey> key type
@@ -57,11 +57,11 @@ public class MainFrame<TKey extends Comparable<TKey> & Serializable> extends JFr
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
-			        p.setClearLayout(true);
+			        p.clearLayout = true;
 			        p.revalidate();
 			        p.repaint();
 			    } else {
-			        p.setClearLayout(false);
+			        p.clearLayout = false;
 			        p.revalidate();
 			        p.repaint();
 			    }

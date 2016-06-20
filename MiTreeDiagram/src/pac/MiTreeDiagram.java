@@ -1,16 +1,29 @@
-//<<<<<<< HEAD
 package pac;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 /**
- * Main class of the application
+ * Application which shows structure of the tree (shows tree file in a graphical form).
+ * After start, it's needed to choose file which contains the tree.
+ * Every line represents one page. The application shows only used nodes of the tree.
+ * In each node, there are three types of showed values:
+ * -green rectangles represent pointers (in inner node they have also index of page where it points)
+ * -yellow rectangles represent keys (with their value)
+ * -lightblue rectangles represent additional values of inner nodes of the tree
+ * 
+ * In the bottom of the window there are:
+ * -checkbox which turns the clear layout mode (root is showed last, doesn't show unused pages),
+ * -reload button
+
  * @author Grzegorz Stasiak
  *
  */
 public class MiTreeDiagram {
-	static String path = "C:\\Users\\KaczorDonald";
+	/**
+	 * Default path to tree file
+	 */
+	static String path = "C:\\Users\\KaczorDonald"; //currently name of my commputer account
 	public static void main(String [] args){
 		//choose the source of tree file
 		
@@ -31,33 +44,4 @@ public class MiTreeDiagram {
 			System.exit(0);
 		}
 	}
-}/*
-=======
-package pac;
-import java.io.File;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-
-/**
- * Main class of the application
- * @author Grzegorz Stasiak
- *
- 
-public class MiTreeDiagram {
-	static String path = "C:\\Users\\KaczorDonald";
-	public static void main(String [] args){
-		//source of data fileJFileChooser jFileChooser = new JFileChooser();
-		
-		JFileChooser jFileChooser = new JFileChooser();
-		jFileChooser.setCurrentDirectory(new File(path));
-		
-		int result = jFileChooser.showOpenDialog(new JFrame());
-	
-		File selectedFile = null;
-		if (result == JFileChooser.APPROVE_OPTION) {
-		    selectedFile = jFileChooser.getSelectedFile();
-		}
-		MainFrame<Integer, Integer> window = new MainFrame<Integer,Integer>(selectedFile.getAbsolutePath());
-	}
 }
->>>>>>> 480e63b875a3a2d7a16e2c35a6bb584cf9793a04*/
